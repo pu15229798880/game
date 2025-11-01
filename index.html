@@ -23,16 +23,18 @@
             transition: background 1s ease;
             background-size: cover;
             background-position: center;
+            background-attachment: fixed;
         }
         
         .container {
             max-width: 800px;
             width: 100%;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
             text-align: center;
+            backdrop-filter: blur(5px);
         }
         
         h1 {
@@ -57,10 +59,11 @@
         
         .stat-label {
             margin-bottom: 10px;
+            font-size: 1.1rem;
         }
         
         .stat-value {
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: bold;
             color: #ffcc00;
             cursor: pointer;
@@ -68,10 +71,12 @@
             padding: 5px 10px;
             border-radius: 5px;
             user-select: none;
+            text-shadow: 0 0 10px rgba(255, 204, 0, 0.5);
         }
         
         .stat-value:hover {
             background: rgba(255, 204, 0, 0.1);
+            transform: scale(1.05);
         }
         
         .buttons {
@@ -136,6 +141,7 @@
             border-radius: 10px;
             overflow: hidden;
             margin-top: 10px;
+            position: relative;
         }
         
         .progress {
@@ -143,6 +149,17 @@
             background: linear-gradient(to right, #ffcc00, #ff9900);
             width: 0%;
             transition: width 0.5s ease;
+            position: relative;
+        }
+        
+        .progress-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-weight: bold;
+            color: white;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.7);
         }
         
         .auto-status {
@@ -150,6 +167,7 @@
             padding: 10px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 10px;
+            font-size: 1.1rem;
         }
         
         .history {
@@ -366,6 +384,24 @@
             cursor: pointer;
             font-weight: bold;
         }
+        
+        .admin-message {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        
+        .admin-success {
+            background: rgba(56, 239, 125, 0.2);
+            color: #38ef7d;
+        }
+        
+        .admin-error {
+            background: rgba(255, 65, 108, 0.2);
+            color: #ff416c;
+        }
     </style>
 </head>
 <body>
@@ -387,6 +423,7 @@
             <div>升级进度: <span id="currentExp">0</span> / <span id="requiredExp">100</span></div>
             <div class="progress-bar">
                 <div class="progress" id="progressBar"></div>
+                <div class="progress-text" id="progressText">0%</div>
             </div>
         </div>
         
@@ -427,7 +464,7 @@
                     <button class="admin-btn admin-submit" id="adminSubmit">确认</button>
                     <button class="admin-btn admin-cancel" id="adminCancel">取消</button>
                 </div>
-                <div id="adminMessage" style="margin-top: 15px; color: #ffcc00;"></div>
+                <div class="admin-message" id="adminMessage"></div>
             </div>
             
             <div class="admin-controls" id="adminControls">
@@ -536,6 +573,7 @@
         const currentExpElement = document.getElementById('currentExp');
         const requiredExpElement = document.getElementById('requiredExp');
         const progressBar = document.getElementById('progressBar');
+        const progressText = document.getElementById('progressText');
         const clickBtn = document.getElementById('clickBtn');
         const levelUpBtn = document.getElementById('levelUpBtn');
         const autoBtn = document.getElementById('autoBtn');
@@ -631,6 +669,7 @@
             // 更新进度条
             const progressPercent = (gameState.exp / getRequiredExp()) * 100;
             progressBar.style.width = `${Math.min(progressPercent, 100)}%`;
+            progressText.textContent = `${Math.min(Math.round(progressPercent), 100)}%`;
             
             // 更新升级按钮状态
             levelUpBtn.disabled = gameState.exp < getRequiredExp();
@@ -808,6 +847,8 @@
             adminOverlay.style.display = 'none';
             adminPassword.value = '';
             adminMessage.textContent = '';
+            adminMessage.className = 'admin-message';
+            adminMessage.style.display = 'none';
             passwordForm.style.display = 'flex';
             adminControls.style.display = 'none';
             levelClickCount = 0;
@@ -829,6 +870,8 @@
             } else {
                 // 密码错误
                 adminMessage.textContent = '密码错误，请重试！';
+                adminMessage.className = 'admin-message admin-error';
+                adminMessage.style.display = 'block';
                 adminPassword.value = '';
                 adminPassword.focus();
             }
@@ -848,10 +891,14 @@
                 saveGame();
                 
                 adminMessage.textContent = `等级已设置为 ${newLevel}`;
+                adminMessage.className = 'admin-message admin-success';
+                adminMessage.style.display = 'block';
                 
                 addToHistory(`管理员将等级设置为 ${newLevel}`);
             } else {
                 adminMessage.textContent = '请输入有效的等级 (1-100)';
+                adminMessage.className = 'admin-message admin-error';
+                adminMessage.style.display = 'block';
             }
         }
 
@@ -863,10 +910,14 @@
                 saveGame();
                 
                 adminMessage.textContent = `经验值已设置为 ${newExp}`;
+                adminMessage.className = 'admin-message admin-success';
+                adminMessage.style.display = 'block';
                 
                 addToHistory(`管理员将经验值设置为 ${newExp}`);
             } else {
                 adminMessage.textContent = '请输入有效的经验值 (0-10000)';
+                adminMessage.className = 'admin-message admin-error';
+                adminMessage.style.display = 'block';
             }
         }
 
@@ -892,6 +943,8 @@
                 saveGame();
                 
                 adminMessage.textContent = '游戏已重置';
+                adminMessage.className = 'admin-message admin-success';
+                adminMessage.style.display = 'block';
                 
                 addToHistory('管理员重置了游戏');
             }
