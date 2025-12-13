@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>祝磊哥生日快乐</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: "Microsoft YaHei", sans-serif;
+            background-color: #f5f9f7;
+            height: 100vh;
+            overflow: hidden;
+            position: relative;
+            touch-action: none;
+        }
+        
+        /* 聊天气泡弹窗 */
+        .bubble {
+            position: absolute;
+            padding: 1.8vw 2.5vw;
+            border-radius: 3.5vw 3.5vw 3.5vw 1vw;
+            color: #333;
+            font-size: 3vw;
+            font-weight: bold;
+            z-index: 10;
+            opacity: 0;
+            transform: scale(0.5) rotate(var(--rotate, 0deg));
+            animation: bubblePopup 0.5s forwards;
+            display: flex;
+            align-items: center;
+            gap: 1.2vw;
+            max-width: 38vw;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .bubble::before {
+            content: "";
+            width: 4.5vw;
+            height: 4.5vw;
+            background-color: inherit;
+            border-radius: 50%;
+            opacity: 0.8;
+        }
+        
+        /* 五种配色 */
+        .green { background-color: #4CAF50; }
+        .cream { background-color: #fff9e6; }
+        .purple { background-color: #e6d9ff; }
+        .yellow { background-color: #FFC107; }
+        .lightgreen { background-color: #8BC34A; }
+        
+        @keyframes bubblePopup {
+            0% { opacity: 0; transform: scale(0.5) rotate(var(--rotate, 0deg)); }
+            80% { transform: scale(1.05) rotate(var(--rotate, 0deg)); }
+            100% { opacity: 1; transform: scale(1) rotate(var(--rotate, 0deg)); }
+        }
+        
+        /* 粒子样式 */
+        .particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background-color: #ff6b9d; /* 粉红色 */
+            border-radius: 50%;
+            z-index: 20;
+            opacity: 0;
+            box-shadow: 0 0 10px rgba(255, 107, 157, 0.5);
+            transition: all 1.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        /* 最终文字样式 */
+        .final-text {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 7.5vw;
+            font-weight: bold;
+            color: #ff6b9d; /* 粉红色 */
+            text-shadow: 0.4vw 0.4vw 1vw rgba(255, 107, 157, 0.3);
+            opacity: 0;
+            z-index: 25;
+            text-align: center;
+            line-height: 1.2;
+            pointer-events: none;
+            transition: all 0.8s ease;
+        }
+        
+        /* 左下角签名样式 */
+        .sign-text {
+            position: absolute;
+            bottom: 5vw;
+            left: 5vw;
+            font-size: 4vw;
+            color: #ff6b9d;
+            opacity: 0;
+            z-index: 30;
+            text-align: left;
+            font-weight: bold;
+            text-shadow: 0.2vw 0.2vw 0.5vw rgba(255, 107, 157, 0.3);
+            padding: 1.5vw 2.5vw;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 2vw;
+            box-shadow: 0 0.5vw 1.5vw rgba(0, 0, 0, 0.1);
+            transition: opacity 1s ease;
+        }
+        
+        /* 蛋糕样式 */
+        .cake {
+            position: absolute;
+            font-size: 6vw;
+            z-index: 30;
+            opacity: 0;
+            top: -10vw;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.2));
+        }
+        
+        /* 爱心粒子容器 */
+        .heart-container {
+            position: absolute;
+            bottom: 15vw;
+            left: 15vw;
+            width: 40vw;
+            height: 40vw;
+            z-index: 28;
+            pointer-events: none;
+        }
+
+        /* 音乐控制按钮样式 */
+        .music-btn {
+            position: absolute;
+            top: 5vw;
+            right: 5vw;
+            width: 8vw;
+            height: 8vw;
+            border-radius: 50%;
+            background-color: #ff6b9d;
+            color: white;
+            border: none;
+            font-size: 4vw;
+            cursor: pointer;
+            box-shadow: 0 0.5vw 1.5vw rgba(255, 107, 157, 0.5);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        /* 平板及电脑端适配 */
+        @media (min-width: 768px) {
+            .final-text {
+                font-size: 4.5vw;
+                top: 48%;
+            }
+            .sign-text {
+                font-size: 2.5vw;
+                bottom: 3vw;
+                left: 3vw;
+                padding: 1vw 2vw;
+                border-radius: 1.5vw;
+            }
+            .bubble {
+                font-size: 1.4vw;
+                padding: 1vw 1.6vw;
+                max-width: 22vw;
+                white-space: normal;
+                text-overflow: clip;
+            }
+            .bubble::before {
+                width: 2.2vw;
+                height: 2.2vw;
+            }
+            .particle {
+                width: 8px;
+                height: 8px;
+            }
+            .cake {
+                font-size: 4vw;
+                top: -8vw;
+            }
+            .heart-container {
+                width: 25vw;
+                height: 25vw;
+                bottom: 10vw;
+                left: 10vw;
+            }
+            .music-btn {
+                width: 5vw;
+                height: 5vw;
+                font-size: 2.5vw;
+                top: 3vw;
+                right: 3vw;
+            }
+        }
+        
+        @media (min-width: 1024px) {
+            .final-text {
+                font-size: 45px;
+            }
+            .sign-text {
+                font-size: 20px;
+                bottom: 30px;
+                left: 30px;
+                padding: 10px 20px;
+                border-radius: 15px;
+            }
+            .bubble {
+                font-size: 13px;
+                padding: 10px 15px;
+                max-width: 180px;
+            }
+            .bubble::before {
+                width: 18px;
+                height: 18px;
+            }
+            .particle {
+                width: 10px;
+                height: 10px;
+            }
+            .cake {
+                font-size: 32px;
+                top: -40px;
+            }
+            .heart-container {
+                width: 250px;
+                height: 250px;
+                bottom: 100px;
+                left: 100px;
+            }
+            .music-btn {
+                width: 40px;
+                height: 40px;
+                font-size: 20px;
+                top: 30px;
+                right: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="final-text">磊哥<br>Happy birthday</div>
+    <div class="sign-text">@你的儿子</div>
+    <div class="heart-container"></div>
+    <!-- 音频标签 修复闭合问题 -->
+    <audio id="bg-music" loop>
+        <source src="https://assets.mixkit.co/music/preview/mixkit-happy-birthday-to-you-bossa-nova-465.mp3" type="audio/mp3">
+    
+    <!-- 音乐控制按钮 -->
+    <button class="music-btn" id="music-toggle">♪</button>
+
+    <script>
+        // 颜色数组
+        const colors = ['green', 'cream', 'purple', 'yellow', 'lightgreen'];
+        // 80 条磊哥专属生日祝福文案
+        const wishes = [
+            "磊哥生日快乐！", "福气满满万事顺意", "身体棒棒吃嘛嘛香", "事业顺心步步高升", "天天开心没烦恼",
+            "笑容常在活力满满", "好运连连惊喜不断", "新的一岁平安喜乐", "家庭和睦幸福美满", "潇洒自在事事如意",
+            "磊哥最帅无人能比", "财源滚滚福气东来", "健康无忧岁岁平安", "心想事成美梦成真", "精神抖擞意气风发",
+            "生日快乐幸福加倍", "日子红火蒸蒸日上", "朋友相伴福气满满", "顺心顺意好运加持", "快乐翻倍幸福满溢",
+            "平安顺遂喜乐安康", "笑口常开青春永驻", "万事大吉阖家欢乐", "如意吉祥岁岁无忧", "春风得意事事顺心",
+            "福寿安康好运常伴", "生活甜蜜万事胜意", "神采奕奕活力四射", "福气安康快乐永恒", "磊哥生日嗨翻天",
+            "岁岁年年皆胜意", "年年岁岁有今朝", "平安喜乐岁岁无忧", "福禄寿喜全都有", "帅气依旧魅力不减",
+            "工作顺利财源广进", "家庭美满幸福常在", "好运爆棚福气满满", "心情舒畅笑口常开", "每天都有小惊喜",
+            "烦恼全消快乐加倍", "健康长寿福气安康", "平安喜乐幸福相伴", "如意吉祥好运连连", "事业有成蒸蒸日上",
+            "财运亨通财源滚滚", "阖家欢乐幸福美满", "笑口常开好运自来", "活力满满精神焕发", "帅气逼人迷倒全场",
+            "福气满满好运连连", "平安健康万事顺意", "快乐无忧幸福安康", "心想事成万事如意", "一帆风顺前程似锦",
+            "蒸蒸日上鹏程万里", "龙马精神意气风发", "身体健康笑口常开", "幸福美满阖家欢乐", "吉祥如意好运相伴",
+            "财源广进富贵吉祥", "步步高升事业有成", "平安喜乐福寿安康", "青春永驻活力四射", "万事胜意阖家幸福",
+            "好运连连惊喜不断", "笑口常开福气满满", "身体健康万事如意", "幸福安康岁岁平安", "事业顺利财源滚滚",
+            "家庭和睦幸福长久", "帅气依旧风采不减", "快乐天天幸福年年", "如意吉祥好运常伴", "平安顺遂福气安康",
+            "财源滚滚富贵吉祥", "步步高升前程似锦", "龙马精神活力满满", "身体健康福寿绵长", "幸福美满快乐永恒",
+            "吉祥如意岁岁无忧", "好运爆棚惊喜不断", "笑口常开幸福相伴", "身体健康万事如意", "平安喜乐福气满满"
+        ];
+        
+        const body = document.body;
+        const finalText = document.querySelector('.final-text');
+        const signText = document.querySelector('.sign-text');
+        const heartContainer = document.querySelector('.heart-container');
+        const bgMusic = document.getElementById('bg-music');
+        const musicToggle = document.getElementById('music-toggle');
+        let isMusicPlaying = false;
+
+        // 音乐控制功能
+        musicToggle.addEventListener('click', function() {
+            if (isMusicPlaying) {
+                bgMusic.pause();
+                musicToggle.textContent = '♪';
+            } else {
+                bgMusic.play().catch(err => {
+                    console.log('需用户交互后播放音乐', err);
+                    alert('请点击页面任意位置后再开启音乐');
+                });
+                musicToggle.textContent = '❚❚';
+            }
+            isMusicPlaying = !isMusicPlaying;
+        });
+
+        // 页面点击后允许播放音乐（解决浏览器自动播放限制）
+        document.addEventListener('click', function() {
+            if (!isMusicPlaying) {
+                bgMusic.play().catch(err => console.log('音乐播放失败', err));
+                isMusicPlaying = true;
+                musicToggle.textContent = '❚❚';
+            }
+        }, { once: true });
+        
+        // 获取屏幕尺寸
+        function getScreenSize() {
+            return {
+                width: Math.min(body.clientWidth, window.innerWidth),
+                height: Math.min(body.clientHeight, window.innerHeight)
+            };
+        }
+        
+        // 随机位置生成
+        function getRandomPosition() {
+            const {width, height} = getScreenSize();
+            const x = Math.random() * (width - 70) + 15;
+            const y = Math.random() * (height - 50) + 15;
+            return { x, y };
+        }
+        
+        // 生成80个弹窗
+        function createBubbles() {
+            wishes.forEach((wish, index) => {
+                setTimeout(() => {
+                    const bubble = document.createElement('div');
+                    const color = colors[index % 5];
+                    bubble.className = `bubble ${color}`;
+                    bubble.innerText = wish;
+                    const pos = getRandomPosition();
+                    bubble.style.left = `${pos.x}px`;
+                    bubble.style.top = `${pos.y}px`;
+                    const rotate = Math.random() * 10 - 5;
+                    bubble.style.setProperty('--rotate', `${rotate}deg`);
+                    bubble.style.zIndex = Math.floor(Math.random() * 80);
+                    body.appendChild(bubble);
+                }, index * 100);
+            });
+        }
+        
+        // 移除所有气泡弹窗
+        function removeAllBubbles() {
+            const bubbles = document.querySelectorAll('.bubble');
+            bubbles.forEach(bubble => {
+                bubble.style.opacity = '0';
+                bubble.style.transform = 'scale(0) rotate(0deg)';
+                setTimeout(() => {
+                    if (bubble.parentNode) {
+                        bubble.parentNode.removeChild(bubble);
+                    }
+                }, 300);
+            });
+        }
+        
+        // 创建爱心形状的粒子
+        function createHeartParticles() {
+            const heartPoints = [];
+            const heartCount = 60; // 爱心粒子数量
+            
+            // 生成爱心形状的点
+            for (let i = 0; i < heartCount; i++) {
+                const t = (i / heartCount) * Math.PI * 2;
+                // 爱心参数方程
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
+                
+                heartPoints.push({ x, y });
+            }
+            
+            // 为每个爱心点创建粒子
+            heartPoints.forEach((point, index) => {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    
+                    // 设置粒子起始位置为文字中心
+                    const {width, height} = getScreenSize();
+                    const startX = width / 2;
+                    const startY = height / 2;
+                    
+                    // 爱心位置（左下角）
+                    const heartCenterX = heartContainer.offsetLeft + heartContainer.offsetWidth / 2;
+                    const heartCenterY = heartContainer.offsetTop + heartContainer.offsetHeight / 2;
+                    
+                    // 缩放爱心大小
+                    const scale = 8;
+                    const targetX = heartCenterX + point.x * scale;
+                    const targetY = heartCenterY + point.y * scale;
+                    
+                    particle.style.left = `${startX}px`;
+                    particle.style.top = `${startY}px`;
+                    particle.style.opacity = '0.8';
+                    particle.style.zIndex = '28';
+                    
+                    heartContainer.appendChild(particle);
+                    
+                    // 粒子飞向爱心位置
+                    setTimeout(() => {
+                        particle.style.left = `${targetX}px`;
+                        particle.style.top = `${targetY}px`;
+                        particle.style.opacity = '1';
+                        
+                        // 添加闪烁效果
+                        setInterval(() => {
+                            particle.style.opacity = Math.random() > 0.5 ? '1' : '0.7';
+                        }, 500 + Math.random() * 1000);
+                        
+                        // 最后一个粒子到达后显示签名
+                        if (index === heartCount - 1) {
+                            setTimeout(() => {
+                                signText.style.opacity = '1';
+                                signText.style.transition = 'opacity 1s ease';
+                                
+                                // 开始蛋糕下落动画
+                                setTimeout(() => {
+                                    createCakeRain();
+                                }, 500);
+                            }, 500);
+                        }
+                    }, 100);
+                }, index * 50);
+            });
+        }
+        
+        // 创建粒子系统 - 形成文字
+        function createParticlesForText() {
+            const {width, height} = getScreenSize();
+            const centerX = width / 2;
+            const centerY = height / 2;
+            
+            // 创建文字粒子（100个）
+            for (let i = 0; i < 100; i++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.className = 'particle';
+                    
+                    // 粒子起始位置：屏幕四周
+                    let startX, startY;
+                    const side = Math.floor(Math.random() * 4); // 0:上, 1:右, 2:下, 3:左
+                    
+                    switch(side) {
+                        case 0: // 上
+                            startX = Math.random() * width;
+                            startY = -20;
+                            break;
+                        case 1: // 右
+                            startX = width + 20;
+                            startY = Math.random() * height;
+                            break;
+                        case 2: // 下
+                            startX = Math.random() * width;
+                            startY = height + 20;
+                            break;
+                        case 3: // 左
+                            startX = -20;
+                            startY = Math.random() * height;
+                            break;
+                    }
+                    
+                    // 文字区域目标位置
+                    const textWidth = 300;
+                    const textHeight = 100;
+                    const targetX = centerX - textWidth/2 + Math.random() * textWidth;
+                    const targetY = centerY - textHeight/2 + Math.random() * textHeight;
+                    
+                    particle.style.left = `${startX}px`;
+                    particle.style.top = `${startY}px`;
+                    body.appendChild(particle);
+                    
+                    // 粒子飞行动画
+                    setTimeout(() => {
+                        particle.style.opacity = '1';
+                        
+                        setTimeout(() => {
+                            particle.style.left = `${targetX}px`;
+                            particle.style.top = `${targetY}px`;
+                            
+                            // 最后一个粒子到达后显示文字并开始形成爱心
+                            if (i === 99) {
+                                setTimeout(() => {
+                                    // 显示文字
+                                    finalText.style.opacity = '1';
+                                    finalText.style.transform = 'translate(-50%, -50%) scale(1)';
+                                    finalText.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                                    
+                                    // 开始爱心粒子动画
+                                    setTimeout(() => {
+                                        createHeartParticles();
+                                    }, 1000);
+                                }, 1600);
+                            }
+                        }, 50);
+                    }, i * 10);
+                }, i * 10);
+            }
+        }
+        
+        // 创建蛋糕雨
+        function createCakeRain() {
+            const {width} = getScreenSize();
+            const cakeCount = 15;
+            
+            // 添加蛋糕下落动画关键帧
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes fall {
+                    0% {
+                        opacity: 1;
+                        transform: translateY(0) rotate(0deg);
+                    }
+                    100% {
+                        opacity: 1;
+                        transform: translateY(calc(100vh + 50px)) rotate(360deg);
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+            
+            for (let i = 0; i < cakeCount; i++) {
+                setTimeout(() => {
+                    const cake = document.createElement('div');
+                    cake.className = 'cake';
+                    cake.innerHTML = '🎂';
+                    
+                    // 随机起始位置（主要在屏幕上半部分）
+                    const startX = Math.random() * (width - 50);
+                    cake.style.left = `${startX}px`;
+                    
+                    // 随机下落参数
+                    const duration = 2 + Math.random() * 3; // 2-5秒
+                    const delay = Math.random() * 2; // 0-2秒延迟
+                    
+                    cake.style.animation = `fall ${duration}s ease-in ${delay}s forwards`;
+                    cake.style.opacity = '1';
+                    
+                    body.appendChild(cake);
+                    
+                    // 蛋糕落地后移除
+                    setTimeout(() => {
+                        cake.style.opacity = '0';
+                        cake.style.transition = 'opacity 0.5s ease';
+                        setTimeout(() => {
+                            if (cake.parentNode) {
+                                cake.parentNode.removeChild(cake);
+                            }
+                        }, 500);
+                    }, (delay + duration) * 1000);
+                }, i * 300);
+            }
+        }
+        
+        // 启动函数
+        function startAnimation() {
+            // 第一阶段：弹窗弹出
+            createBubbles();
+            
+            // 第二阶段：弹窗消失，粒子聚集形成文字
+            setTimeout(() => {
+                removeAllBubbles();
+                setTimeout(() => {
+                    createParticlesForText();
+                }, 500);
+            }, wishes.length * 100 + 1000);
+        }
+        
+        // 开始动画
+        startAnimation();
+        
+        // 屏幕旋转监听
+        window.addEventListener('resize', () => {
+            location.reload();
+        });
+    </script>
+</body>
+</html>
